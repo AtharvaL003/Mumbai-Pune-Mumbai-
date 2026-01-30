@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai - Pune - Mumbai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+        }
+
+        /* Animated gradient background */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Start Screen */
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-screen.hidden {
+            display: none;
+        }
+
+        .game-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 4.5em;
+            color: #ffffff;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 50px;
+            line-height: 1.3;
+            animation: titlePulse 3s ease-in-out infinite;
+            z-index: 10;
+            position: relative;
+            filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.8))
+                    drop-shadow(0 0 40px rgba(192, 108, 132, 0.6))
+                    drop-shadow(0 0 60px rgba(108, 91, 123, 0.4));
+            -webkit-filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.8))
+                           drop-shadow(0 0 40px rgba(192, 108, 132, 0.6))
+                           drop-shadow(0 0 60px rgba(108, 91, 123, 0.4));
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2.5em;
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 2em;
+            }
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Animated Images */
+        .floating-images {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .cultural-image {
+            position: absolute;
+            font-size: 8em;
+            opacity: 0.5;
+            animation: floatImage 25s infinite ease-in-out;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+        }
+
+        @media (max-width: 768px) {
+            .cultural-image {
+                font-size: 5em;
+                opacity: 0.4;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cultural-image {
+                font-size: 3em;
+                opacity: 0.3;
+            }
+        }
+
+        .cultural-image:nth-child(1) { 
+            left: 5%; 
+            top: 10%; 
+            animation-delay: 0s; 
+            animation-duration: 20s; 
+            font-size: 10em;
+        }
+        .cultural-image:nth-child(2) { 
+            left: 75%; 
+            top: 8%; 
+            animation-delay: 3s; 
+            animation-duration: 22s; 
+            font-size: 9em;
+        }
+        .cultural-image:nth-child(3) { 
+            left: 10%; 
+            top: 65%; 
+            animation-delay: 6s; 
+            animation-duration: 24s; 
+            font-size: 11em;
+        }
+        .cultural-image:nth-child(4) { 
+            left: 80%; 
+            top: 70%; 
+            animation-delay: 2s; 
+            animation-duration: 21s; 
+            font-size: 10em;
+        }
+        .cultural-image:nth-child(5) { 
+            left: 45%; 
+            top: 5%; 
+            animation-delay: 4s; 
+            animation-duration: 23s; 
+            font-size: 9.5em;
+        }
+        .cultural-image:nth-child(6) { 
+            left: 15%; 
+            top: 40%; 
+            animation-delay: 7s; 
+            animation-duration: 19s; 
+            font-size: 10.5em;
+        }
+        .cultural-image:nth-child(7) { 
+            left: 70%; 
+            top: 45%; 
+            animation-delay: 1s; 
+            animation-duration: 25s; 
+            font-size: 11.5em;
+        }
+        .cultural-image:nth-child(8) { 
+            left: 35%; 
+            top: 75%; 
+            animation-delay: 5s; 
+            animation-duration: 20s; 
+            font-size: 10em;
+        }
+        .cultural-image:nth-child(9) { 
+            left: 55%; 
+            top: 25%; 
+            animation-delay: 8s; 
+            animation-duration: 22s; 
+            font-size: 9em;
+        }
+        .cultural-image:nth-child(10) { 
+            left: 25%; 
+            top: 55%; 
+            animation-delay: 3.5s; 
+            animation-duration: 21s; 
+            font-size: 10.5em;
+        }
+        .cultural-image:nth-child(11) { 
+            left: 60%; 
+            top: 60%; 
+            animation-delay: 2.5s; 
+            animation-duration: 23s; 
+            font-size: 9.5em;
+        }
+        .cultural-image:nth-child(12) { 
+            left: 85%; 
+            top: 30%; 
+            animation-delay: 6.5s; 
+            animation-duration: 24s; 
+            font-size: 11em;
+        }
+
+        @keyframes floatImage {
+            0%, 100% { 
+                transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translateY(-40px) translateX(20px) rotate(3deg) scale(1.05);
+            }
+            50% {
+                transform: translateY(-70px) translateX(-15px) rotate(-3deg) scale(1.1);
+            }
+            75% {
+                transform: translateY(-40px) translateX(15px) rotate(2deg) scale(1.05);
+            }
+        }
+
+        .start-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 25px 60px;
+            font-size: 1.8em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Fredoka One', cursive;
+            animation: pulse 2s ease infinite;
+        }
+
+        @media (max-width: 768px) {
+            .start-button {
+                padding: 20px 50px;
+                font-size: 1.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .start-button {
+                padding: 15px 40px;
+                font-size: 1.2em;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .start-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 50px rgba(255, 255, 255, 0.5);
+            background: #f8f8f8;
+        }
+
+        /* Player Selection Screen */
+        .player-selection {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .player-selection.active {
+            display: flex;
+        }
+
+        .selection-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3em;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .selection-title {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+        }
+
+        .player-options {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .player-options {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        .player-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 3px solid transparent;
+        }
+
+        .player-card:hover:not(.locked):not(.selected) {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .player-card.selected {
+            background: rgba(255, 255, 255, 0.45);
+            border: 3px solid #4caf50;
+            transform: scale(1.05);
+        }
+
+        .player-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(150, 150, 150, 0.2);
+        }
+
+        .player-card h2 {
+            font-size: 2.5em;
+            color: white;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .player-card .symbol {
+            font-size: 4em;
+            font-weight: bold;
+        }
+
+        .player-card.player1 .symbol {
+            color: #667eea;
+        }
+
+        .player-card.player2 .symbol {
+            color: #f093fb;
+        }
+
+        .selection-status {
+            color: white;
+            font-size: 1.3em;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+
+        /* Room System Styles */
+        .room-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .room-screen.active {
+            display: flex;
+        }
+
+        .room-container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 500px;
+        }
+
+        @media (max-width: 768px) {
+            .room-container {
+                padding: 35px;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .room-container {
+                padding: 25px;
+                max-width: 90%;
+            }
+        }
+
+        .room-container h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5em;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .room-container h2 {
+                font-size: 2em;
+            }
+        }
+
+        .room-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .room-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: 700;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .room-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .room-button {
+                padding: 15px 30px;
+                font-size: 1.2em;
+            }
+        }
+
+        .room-code-display {
+            background: white;
+            color: #667eea;
+            font-family: 'Fredoka One', cursive;
+            font-size: 3em;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            letter-spacing: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 480px) {
+            .room-code-display {
+                font-size: 2em;
+                letter-spacing: 5px;
+            }
+        }
+
+        .room-input {
+            background: white;
+            border: none;
+            padding: 20px;
+            font-size: 2em;
+            text-align: center;
+            border-radius: 15px;
+            font-family: 'Fredoka One', cursive;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        @media (max-width: 480px) {
+            .room-input {
+                font-size: 1.5em;
+                letter-spacing: 5px;
+                padding: 15px;
+            }
+        }
+
+        .room-status {
+            color: white;
+            font-size: 1.2em;
+            margin-top: 20px;
+            min-height: 30px;
+        }
+
+        .waiting-indicator {
+            color: white;
+            font-size: 1.1em;
+            margin-top: 15px;
+            animation: pulse 2s ease infinite;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container.active {
+            display: flex;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .game-header h1 {
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-header h1 {
+                font-size: 1.5em;
+            }
+        }
+
+        .round-info {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(135deg, #feca57, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s ease infinite;
+            padding: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .round-info {
+                font-size: 1.3em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .round-info {
+                font-size: 1.1em;
+            }
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 60px;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .scoreboard {
+                gap: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scoreboard {
+                gap: 20px;
+                flex-direction: row;
+            }
+        }
+
+        .player-score {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-width: 180px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .player-score {
+                padding: 15px 30px;
+                min-width: 140px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .player-score {
+                padding: 10px 20px;
+                min-width: 100px;
+            }
+
+            .player-score h3 {
+                font-size: 1em;
+            }
+
+            .player-score .score {
+                font-size: 1.8em;
+            }
+        }
+
+        .player-score h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .player-score .score {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 130px);
+            grid-template-rows: repeat(3, 130px);
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 25px;
+            background: rgba(20, 20, 40, 0.5);
+            border-radius: 25px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .game-board {
+                grid-template-columns: repeat(3, 100px);
+                grid-template-rows: repeat(3, 100px);
+                gap: 10px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-board {
+                grid-template-columns: repeat(3, 80px);
+                grid-template-rows: repeat(3, 80px);
+                gap: 8px;
+                padding: 15px;
+            }
+        }
+
+        .cell {
+            background: rgba(15, 15, 35, 0.7);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            font-size: 3.5em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            box-shadow: 
+                inset 0 2px 10px rgba(0,0,0,0.3),
+                0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .cell {
+                font-size: 2.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cell {
+                font-size: 2em;
+                border-radius: 12px;
+            }
+        }
+
+        .cell:hover:not(.taken) {
+            background: rgba(30, 30, 60, 0.8);
+            transform: scale(1.05);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .cell.taken {
+            cursor: not-allowed;
+        }
+
+        .cell.x {
+            color: #667eea;
+            text-shadow: 0 0 15px rgba(102, 126, 234, 0.7);
+        }
+
+        .cell.o {
+            color: #f093fb;
+            text-shadow: 0 0 15px rgba(240, 147, 251, 0.7);
+        }
+
+        .current-player {
+            font-size: 1.3em;
+            color: white;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 30px;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 20px;
+                max-width: 90%;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5em;
+            }
+
+            .question {
+                font-size: 1.1em;
+                padding: 15px;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .question {
+            font-size: 1.3em;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .modal-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .modal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .reset-button {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+        }
+
+        .reset-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .exit-button {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(80, 80, 100, 0.6);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .exit-button {
+                bottom: 20px;
+                left: 20px;
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .exit-button {
+                bottom: 15px;
+                left: 15px;
+                padding: 8px 15px;
+                font-size: 0.8em;
+            }
+        }
+
+        .exit-button:hover {
+            background: rgba(100, 100, 120, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .winner-announcement {
+            font-size: 1.5em;
+            color: #4caf50;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .game-over {
+            margin-top: 20px;
+        }
+
+        .final-score {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    
+    <!-- Exit Button (visible throughout) -->
+    <button class="exit-button" onclick="exitGame()">← Exit</button>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="floating-images">
+            <div class="cultural-image">🏛️</div>
+            <div class="cultural-image">🕌</div>
+            <div class="cultural-image">🍛</div>
+            <div class="cultural-image">🧁</div>
+            <div class="cultural-image">🍜</div>
+            <div class="cultural-image">🕉️</div>
+            <div class="cultural-image">🎭</div>
+            <div class="cultural-image">🥘</div>
+            <div class="cultural-image">🛕</div>
+            <div class="cultural-image">🍲</div>
+            <div class="cultural-image">🪔</div>
+            <div class="cultural-image">🌊</div>
+        </div>
+        <h1 class="game-title">MUMBAI<br>↕<br>PUNE<br>↕<br>MUMBAI</h1>
+        <button class="start-button" onclick="showRoomSelection()">START GAME</button>
+    </div>
+
+    <!-- Room Selection Screen -->
+    <div class="room-screen" id="roomScreen">
+        <div class="room-container">
+            <h2>Choose Mode</h2>
+            <div class="room-options">
+                <button class="room-button" onclick="createRoom()">Create Room</button>
+                <button class="room-button" onclick="showJoinRoom()">Join Room</button>
+            </div>
+            <button class="back-button" onclick="goBackToStart()">← Back</button>
+        </div>
+    </div>
+
+    <!-- Create Room Screen -->
+    <div class="room-screen" id="createRoomScreen">
+        <div class="room-container">
+            <h2>Your Room Code</h2>
+            <div class="room-code-display" id="roomCodeDisplay">----</div>
+            <p style="color: white; font-size: 1.2em;">Share this code with your partner!</p>
+            <div class="waiting-indicator">Waiting for player to join...</div>
+            <div class="room-status" id="createRoomStatus"></div>
+            <button class="back-button" onclick="cancelRoom()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Join Room Screen -->
+    <div class="room-screen" id="joinRoomScreen">
+        <div class="room-container">
+            <h2>Enter Room Code</h2>
+            <input type="text" class="room-input" id="roomCodeInput" maxlength="4" placeholder="----">
+            <div class="room-options">
+                <button class="room-button" onclick="joinRoom()">Join Game</button>
+            </div>
+            <div class="room-status" id="joinRoomStatus"></div>
+            <button class="back-button" onclick="goBackToRoomSelect()">← Back</button>
+        </div>
+    </div>
+    
+    <!-- Game Screen -->
+    <div class="container" id="gameContainer">
+        <div class="game-header">
+            <h1>💝 Mumbai - Pune - Mumbai 💝</h1>
+            <div class="round-info">🎮 Round <span id="currentRound">1</span> of 6 🎮</div>
+            <div class="scoreboard">
+                <div class="player-score">
+                    <h3>Player 1 (X)</h3>
+                    <div class="score" id="player1Score">0</div>
+                </div>
+                <div class="player-score">
+                    <h3>Player 2 (O)</h3>
+                    <div class="score" id="player2Score">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="current-player" id="turnIndicator">
+            Current Turn: Player 1 (X)
+        </div>
+
+        <div class="current-player" id="playerRoleIndicator" style="background: rgba(255, 255, 255, 0.15);">
+            You are: <span id="yourRole">Player 1 (X)</span>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <button class="cell" data-index="0"></button>
+            <button class="cell" data-index="1"></button>
+            <button class="cell" data-index="2"></button>
+            <button class="cell" data-index="3"></button>
+            <button class="cell" data-index="4"></button>
+            <button class="cell" data-index="5"></button>
+            <button class="cell" data-index="6"></button>
+            <button class="cell" data-index="7"></button>
+            <button class="cell" data-index="8"></button>
+        </div>
+
+        <button class="reset-button" onclick="resetGame()">Reset Game</button>
+    </div>
+
+    <!-- Round End Modal -->
+    <div class="modal" id="roundModal">
+        <div class="modal-content">
+            <h2 id="roundResult"></h2>
+            <div class="question" id="questionText"></div>
+            <button class="modal-button" onclick="nextRound()">Play Next Round</button>
+        </div>
+    </div>
+
+    <!-- Game End Modal -->
+    <div class="modal" id="gameEndModal">
+        <div class="modal-content">
+            <h2>🎉 Game Over! 🎉</h2>
+            <div class="winner-announcement" id="finalWinner"></div>
+            <div class="game-over">
+                <div class="final-score" id="finalScores"></div>
+            </div>
+            <div class="question" id="finalQuestion"></div>
+            <button class="modal-button" onclick="startNewGame()">Start New Game</button>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // FIREBASE CONFIGURATION
+        // ========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCn3TS4-AnQ7xaHNnUUrAdQfx5q7HvgoZk",
+            authDomain: "mumbai-pune-mumbai-90faa.firebaseapp.com",
+            databaseURL: "https://mumbai-pune-mumbai-90faa-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "mumbai-pune-mumbai-90faa",
+            storageBucket: "mumbai-pune-mumbai-90faa.firebasestorage.app",
+            messagingSenderId: "210189345897",
+            appId: "1:210189345897:web:50be0a965ec3d3766deef8",
+            measurementId: "G-Q0XL867PSD"
+        };
+
+        // Initialize Firebase
+        let firebaseInitialized = false;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            firebaseInitialized = true;
+            console.log("✅ Firebase initialized successfully!");
+        } catch (error) {
+            console.error("❌ Firebase initialization error:", error);
+            // Don't alert - just log it
+            console.warn("Game will still work for testing, but multiplayer won't function.");
+        }
+
+        const database = firebaseInitialized ? firebase.database() : null;
+
+        // ========================================
+        // MULTIPLAYER STATE
+        // ========================================
+        let roomCode = null;
+        let playerRole = null; // 'X' or 'O'
+        let isMyTurn = false;
+        let roomRef = null;
+        let gameRef = null;
+        // Game state
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+        let player1Wins = 0;
+        let player2Wins = 0;
+        let currentRound = 1;
+        const maxRounds = 6;
+        let player1Selected = false;
+        let player2Selected = false;
+
+        // ========================================
+        // ROOM MANAGEMENT FUNCTIONS
+        // ========================================
+        
+        function showRoomSelection() {
+            console.log("START GAME clicked!");
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('roomScreen').classList.add('active');
+        }
+
+        function goBackToStart() {
+            document.getElementById('roomScreen').classList.remove('active');
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
+        function goBackToRoomSelect() {
+            document.getElementById('joinRoomScreen').classList.remove('active');
+            document.getElementById('createRoomScreen').classList.remove('active');
+            document.getElementById('roomScreen').classList.add('active');
+        }
+
+        function generateRoomCode() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        function createRoom() {
+            console.log("Create Room clicked!");
+            if (!database) {
+                alert("Firebase is not connected. Please check your internet connection and refresh the page.");
+                return;
+            }
+
+            roomCode = generateRoomCode();
+            playerRole = 'X'; // Creator is always Player 1 (X)
+            
+            document.getElementById('roomScreen').classList.remove('active');
+            document.getElementById('createRoomScreen').classList.add('active');
+            document.getElementById('roomCodeDisplay').textContent = roomCode;
+
+            // Create room in Firebase
+            roomRef = database.ref('rooms/' + roomCode);
+            roomRef.set({
+                player1: 'connected',
+                player2: 'waiting',
+                currentTurn: 'X',
+                board: ['', '', '', '', '', '', '', '', ''],
+                round: 1,
+                player1Wins: 0,
+                player2Wins: 0,
+                gameActive: true,
+                createdAt: Date.now()
+            });
+
+            // Listen for player 2 joining
+            roomRef.child('player2').on('value', (snapshot) => {
+                if (snapshot.val() === 'connected') {
+                    document.getElementById('createRoomStatus').textContent = 'Player 2 joined! Starting game...';
+                    setTimeout(() => startMultiplayerGame(), 1500);
+                }
+            });
+        }
+
+        function showJoinRoom() {
+            console.log("Join Room clicked!");
+            document.getElementById('roomScreen').classList.remove('active');
+            document.getElementById('joinRoomScreen').classList.add('active');
+        }
+
+        function joinRoom() {
+            console.log("Join button clicked!");
+            if (!database) {
+                alert("Firebase is not connected. Please check your internet connection and refresh the page.");
+                return;
+            }
+
+            roomCode = document.getElementById('roomCodeInput').value.trim();
+            
+            if (roomCode.length !== 4) {
+                document.getElementById('joinRoomStatus').textContent = 'Please enter a 4-digit code';
+                return;
+            }
+
+            playerRole = 'O'; // Joiner is always Player 2 (O)
+            
+            // Check if room exists
+            roomRef = database.ref('rooms/' + roomCode);
+            roomRef.once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    const roomData = snapshot.val();
+                    if (roomData.player2 === 'waiting') {
+                        // Join the room
+                        roomRef.update({
+                            player2: 'connected'
+                        });
+                        document.getElementById('joinRoomStatus').textContent = 'Joined! Starting game...';
+                        setTimeout(() => startMultiplayerGame(), 1500);
+                    } else {
+                        document.getElementById('joinRoomStatus').textContent = 'Room is full!';
+                    }
+                } else {
+                    document.getElementById('joinRoomStatus').textContent = 'Room not found!';
+                }
+            });
+        }
+
+        function cancelRoom() {
+            if (roomRef) {
+                roomRef.remove();
+            }
+            goBackToRoomSelect();
+        }
+
+        function startMultiplayerGame() {
+            document.getElementById('createRoomScreen').classList.remove('active');
+            document.getElementById('joinRoomScreen').classList.remove('active');
+            document.getElementById('gameContainer').classList.add('active');
+            
+            // Update role indicator
+            document.getElementById('yourRole').textContent = playerRole === 'X' ? 'Player 1 (X)' : 'Player 2 (O)';
+            
+            // Set up Firebase listeners
+            setupGameListeners();
+            
+            // Set initial turn
+            isMyTurn = playerRole === 'X';
+            updateTurnIndicator();
+        }
+
+        function setupGameListeners() {
+            if (!roomRef) return;
+
+            gameRef = roomRef;
+
+            // Listen for board changes
+            gameRef.child('board').on('value', (snapshot) => {
+                const newBoard = snapshot.val();
+                if (newBoard) {
+                    board = newBoard;
+                    updateBoardUI();
+                }
+            });
+
+            // Listen for turn changes
+            gameRef.child('currentTurn').on('value', (snapshot) => {
+                const turn = snapshot.val();
+                if (turn) {
+                    currentPlayer = turn;
+                    isMyTurn = (turn === playerRole);
+                    updateTurnIndicator();
+                }
+            });
+
+            // Listen for round changes
+            gameRef.child('round').on('value', (snapshot) => {
+                const round = snapshot.val();
+                if (round) {
+                    currentRound = round;
+                    document.getElementById('currentRound').textContent = currentRound;
+                }
+            });
+
+            // Listen for score changes
+            gameRef.child('player1Wins').on('value', (snapshot) => {
+                const wins = snapshot.val();
+                if (wins !== null) {
+                    player1Wins = wins;
+                    document.getElementById('player1Score').textContent = player1Wins;
+                }
+            });
+
+            gameRef.child('player2Wins').on('value', (snapshot) => {
+                const wins = snapshot.val();
+                if (wins !== null) {
+                    player2Wins = wins;
+                    document.getElementById('player2Score').textContent = player2Wins;
+                }
+            });
+
+            // Listen for game active status
+            gameRef.child('gameActive').on('value', (snapshot) => {
+                const active = snapshot.val();
+                if (active !== null) {
+                    gameActive = active;
+                }
+            });
+        }
+
+        function updateBoardUI() {
+            cells.forEach((cell, index) => {
+                cell.textContent = board[index];
+                cell.classList.remove('taken', 'x', 'o');
+                if (board[index] !== '') {
+                    cell.classList.add('taken', board[index].toLowerCase());
+                }
+            });
+        }
+
+        function selectPlayer(playerNum) {
+            // This function is no longer used in multiplayer mode
+            // Keeping for compatibility
+        }
+
+        function exitGame() {
+            if (confirm('Are you sure you want to exit? All progress will be lost.')) {
+                // Clean up Firebase listeners
+                if (roomRef) {
+                    roomRef.off();
+                    roomRef.remove();
+                }
+                location.reload();
+            }
+        }
+
+        // Deep relationship questions bank (psychology-based)
+        const questions = [
+            "What's a childhood memory that still shapes who you are today? How does it influence your decisions or feelings?",
+            "When you feel most vulnerable, what do you need from me? How can I make you feel safe in those moments?",
+            "What's a dream or goal you've never told me about because you're afraid of being judged or it not working out?",
+            "Describe a moment when you felt truly seen and understood by someone. What made it special?",
+            "What's something about yourself that you're still learning to accept? How can I support you in that journey?",
+            "When you think about our future together, what excites you most? What scares you most?",
+            "What's a quality in yourself that you wish you had more of? What holds you back from developing it?",
+            "Tell me about a time you felt misunderstood by me. What would you have wanted me to know or do differently?",
+            "What does 'being loved' mean to you? How do you know when you're truly loved by someone?",
+            "What's a fear you carry about our relationship that you haven't fully expressed?",
+            "If you could change one thing about how you communicate your feelings, what would it be?",
+            "What's something I do that makes you feel most connected to me? What makes you feel distant?",
+            "Describe your ideal version of yourself in 5 years. What steps do you need to take to become that person?",
+            "What's a belief you held about relationships before us that has changed since we've been together?",
+            "When you're struggling emotionally, do you prefer space or closeness? What does support look like for you?",
+            "What's something you've never apologized for but wish you had? What held you back?",
+            "If you could tell your younger self one thing about love and relationships, what would it be?",
+            "What's a pattern in your past relationships (romantic or otherwise) that you notice yourself repeating?",
+            "What makes you feel most valued and appreciated in our relationship? What makes you feel taken for granted?",
+            "What's an insecurity of yours that affects how you show up in our relationship?",
+            "Describe a moment when you felt completely yourself around me. What allowed you to feel that free?",
+            "What's something you wish you were better at expressing to me? What makes it difficult?",
+            "When you imagine growing old together, what do you hope will remain constant between us?",
+            "What's a part of your personality that people misunderstand? How do you wish they saw you instead?",
+            "What does emotional intimacy mean to you? Do you feel we have it? What would deepen it?",
+            "What's a sacrifice you've made in your life that people don't know about? How has it affected you?",
+            "When you feel disconnected from me, what's usually the underlying reason? How can we reconnect?",
+            "What's something you learned from your family about relationships that you want to keep? What do you want to change?",
+            "If you could change one thing about yourself to be a better partner, what would it be?",
+            "What's a conversation you've been avoiding having with me? Why has it been hard to bring up?"
+        ];
+
+        // Winning combinations
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+
+        // Initialize game
+        const cells = document.querySelectorAll('.cell');
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleCellClick);
+        });
+
+        function handleCellClick(e) {
+            const index = e.target.dataset.index;
+            
+            // Check if it's your turn in multiplayer
+            if (!isMyTurn) {
+                return; // Not your turn!
+            }
+            
+            if (board[index] !== '' || !gameActive) {
+                return;
+            }
+
+            // Update board locally
+            board[index] = currentPlayer;
+            
+            // Update Firebase
+            if (gameRef) {
+                gameRef.child('board').set(board);
+            }
+            
+            e.target.textContent = currentPlayer;
+            e.target.classList.add('taken', currentPlayer.toLowerCase());
+
+            if (checkWin()) {
+                endRound(currentPlayer === 'X' ? 'Player 1' : 'Player 2', 'win');
+            } else if (board.every(cell => cell !== '')) {
+                endRound(null, 'draw');
+            } else {
+                // Switch turn
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                
+                // Update Firebase
+                if (gameRef) {
+                    gameRef.update({
+                        currentTurn: currentPlayer
+                    });
+                }
+                
+                updateTurnIndicator();
+            }
+        }
+
+        function checkWin() {
+            return winningCombos.some(combo => {
+                const [a, b, c] = combo;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        function updateTurnIndicator() {
+            const indicator = document.getElementById('turnIndicator');
+            const turnText = `Current Turn: ${currentPlayer === 'X' ? 'Player 1 (X)' : 'Player 2 (O)'}`;
+            
+            if (isMyTurn) {
+                indicator.textContent = turnText + ' - YOUR TURN! 🎮';
+                indicator.style.background = 'rgba(76, 175, 80, 0.3)';
+            } else {
+                indicator.textContent = turnText + ' - Waiting...';
+                indicator.style.background = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+
+        function endRound(winner, type) {
+            gameActive = false;
+            
+            // Update Firebase game active status
+            if (gameRef) {
+                gameRef.update({ gameActive: false });
+            }
+            
+            if (type === 'win') {
+                if (winner === 'Player 1') {
+                    player1Wins++;
+                    if (gameRef) {
+                        gameRef.update({ player1Wins: player1Wins });
+                    }
+                    document.getElementById('player1Score').textContent = player1Wins;
+                } else {
+                    player2Wins++;
+                    if (gameRef) {
+                        gameRef.update({ player2Wins: player2Wins });
+                    }
+                    document.getElementById('player2Score').textContent = player2Wins;
+                }
+            }
+
+            // Show modal with question for loser or both in case of draw
+            setTimeout(() => {
+                const modal = document.getElementById('roundModal');
+                const resultText = document.getElementById('roundResult');
+                const questionText = document.getElementById('questionText');
+                
+                if (type === 'draw') {
+                    resultText.textContent = "It's a Draw! 🤝";
+                    questionText.textContent = "Both players answer: " + getRandomQuestion();
+                } else {
+                    const loser = winner === 'Player 1' ? 'Player 2' : 'Player 1';
+                    resultText.textContent = `${winner} Wins! 🎉`;
+                    questionText.textContent = `${loser}, answer this: ${getRandomQuestion()}`;
+                }
+                
+                modal.classList.add('show');
+            }, 500);
+        }
+
+        function getRandomQuestion() {
+            return questions[Math.floor(Math.random() * questions.length)];
+        }
+
+        function nextRound() {
+            const modal = document.getElementById('roundModal');
+            modal.classList.remove('show');
+            
+            if (currentRound >= maxRounds) {
+                endGame();
+            } else {
+                currentRound++;
+                if (gameRef) {
+                    gameRef.update({ 
+                        round: currentRound,
+                        gameActive: true 
+                    });
+                }
+                document.getElementById('currentRound').textContent = currentRound;
+                resetBoard();
+            }
+        }
+
+        function resetBoard() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            
+            // Update Firebase
+            if (gameRef) {
+                gameRef.update({
+                    board: board,
+                    currentTurn: 'X',
+                    gameActive: true
+                });
+            }
+            
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('taken', 'x', 'o');
+            });
+            
+            // Reset turn status
+            isMyTurn = (playerRole === 'X');
+            updateTurnIndicator();
+        }
+
+        function endGame() {
+            const modal = document.getElementById('gameEndModal');
+            const finalWinner = document.getElementById('finalWinner');
+            const finalScores = document.getElementById('finalScores');
+            const finalQuestion = document.getElementById('finalQuestion');
+            
+            let gameWinner, gameLoser;
+            
+            if (player1Wins > player2Wins) {
+                gameWinner = 'Player 1';
+                gameLoser = 'Player 2';
+                finalWinner.textContent = '🏆 Player 1 Wins the Game! 🏆';
+            } else if (player2Wins > player1Wins) {
+                gameWinner = 'Player 2';
+                gameLoser = 'Player 1';
+                finalWinner.textContent = '🏆 Player 2 Wins the Game! 🏆';
+            } else {
+                finalWinner.textContent = "It's a Tie! Both Players Win! 🏆";
+                gameLoser = 'Both Players';
+            }
+            
+            finalScores.textContent = `Final Score - Player 1: ${player1Wins} | Player 2: ${player2Wins}`;
+            finalQuestion.textContent = `${gameLoser}, answer this final question: ${getRandomQuestion()}`;
+            
+            modal.classList.add('show');
+        }
+
+        function startNewGame() {
+            const modal = document.getElementById('gameEndModal');
+            modal.classList.remove('show');
+            
+            player1Wins = 0;
+            player2Wins = 0;
+            currentRound = 1;
+            
+            document.getElementById('player1Score').textContent = '0';
+            document.getElementById('player2Score').textContent = '0';
+            document.getElementById('currentRound').textContent = '1';
+            
+            resetBoard();
+        }
+
+        function resetGame() {
+            if (confirm('Are you sure you want to reset the entire game? All progress will be lost.')) {
+                startNewGame();
+            }
+        }
+    </script>
+</body>
+</html>
